@@ -25,28 +25,30 @@ void USART_PutString(char *s);
 
 
 void System_Init(void) {
-	/* Enable clock for GPIOA and USART2 use function below
+	/* Enable clock for GPIOA and USART2 use function below (x = 1 in this case).
      * RCC_AHBxPeriphClockCmd();
      * RCC_APBxPeriphClockCmd();
-     * USART_Cmd();
      */
 
     /* Write your code here */
 
 	/**
-	 * Tell pins PA2 and PA3 which alternating function you will use
+	 * Tell pins PA2 and PA3 (for Tx and Rx) which alternating function you will use
 	 * @important Make sure, these lines are before pins configuration!
      * Use GPIO_PinAFConfig();
 	 */
 
     /* Write your code here */
 
-	// Initialize GPIO pins as alternating function.
+	// Initialize GPIO pins as alternating function, same process as LED BLINK.
     GPIO_InitTypeDef GPIO_InitStruct;
 
     /* Write your code here */
 
+
+
 	/**
+	 * Now we have to enable the USART line
 	 * Set Baudrate to value you pass to function
 	 * Disable Hardware Flow control
 	 * Set Mode To TX and RX, so USART will work in full-duplex mode
@@ -61,6 +63,12 @@ void System_Init(void) {
 
     /* Write your code here */
 
+
+
+    /*
+     * Enable the USART line
+     * USART_Cmd();
+     */
 #ifdef INTERRUPT_METHOD
 	/** If you wanna more challenge, initialize the NVCR interrupt,
 	 * The correspond function for this has been finished at the end of main.c, USART2_IRQHandler(void).
