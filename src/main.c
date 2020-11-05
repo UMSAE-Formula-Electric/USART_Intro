@@ -8,7 +8,7 @@
   ******************************************************************************
 */
 
-
+#define RE
 #include "stm32f4xx.h"
 #include "stm32f4xx_rcc.h"
 #include "stm32f4xx_gpio.h"
@@ -22,10 +22,19 @@ void USART_PutChar(char c);
 uint16_t USART_GetChar();
 void USART_PutString(char *s);
 
+#ifdef RE
 
+#define USB_USART USART2
+#endif
+
+#ifdef ZE
+
+#define USB_USART USART3
+#endif
 
 void System_Init(void) {
-	/* Enable clock for GPIOA and USART2 use function below (x = 1 in this case).
+	/* Enable clock for GPIOA and USART2  (for RE) use function below (x = 1 in this case).
+	 * Enable clock for GPIOD and USART3  (for ZE)
      * RCC_AHBxPeriphClockCmd();
      * RCC_APBxPeriphClockCmd();
      */
@@ -33,7 +42,8 @@ void System_Init(void) {
     /* Write your code here */
 
 	/**
-	 * Tell pins PA2 and PA3 (for Tx and Rx) which alternating function you will use
+	 * Tell pins PA2 and PA3 (for Tx and Rx for RE) which alternating function you will use
+	 * Tell pins PD8 and PD9 (for Tx and Rx for ZE) which alternating function you will use
 	 * @important Make sure, these lines are before pins configuration!
      * Use GPIO_PinAFConfig();
 	 */
@@ -105,7 +115,7 @@ int main(void) {
 		c = USART_GetChar();
 		if (c) {
 			/* If anything received, put it back to terminal */
-			USART_SendData(USART2, c);
+			USART_SendData(USB_USART, c);
 		}
 	}
 
@@ -122,6 +132,9 @@ int main(void) {
 
 void USART_PutChar(char c) {
 // Wait until transmit data register is empty, use USART_GetFlagStatus to get register status
+	while(USART_GetFlagStatus(USB_USART, USART_FLAG_TXE == RESET));
+
+
 
 
 // Send a char using USART2 use USART_SendData()
@@ -154,12 +167,12 @@ void USART2_IRQHandler(void)
 {
 	/* RXNE handler */
 	uint16_t c;;
-	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
+	if(USART_GetITStatus(USB_USART, USART_IT_RXNE) != RESET)
 	{
 		c = USART_GetChar();
 		if (c) {
 			/* If anything received, put it back to terminal */
-			USART_SendData(USART2, c);
+			USART_SendData(USB_USART, c);
 		}
 	}
 }
