@@ -81,13 +81,13 @@ void System_Init(void) {
      */
 #ifdef INTERRUPT_METHOD
 	/** If you wanna more challenge, initialize the NVCR interrupt,
-	 * The correspond function for this has been finished at the end of main.c, USART2_IRQHandler(void).
+	 * The correspond function for this has been finished at the end of main.c, USART2_IRQHandler(void) or USART3_IRQHandler(void) .
 	 * Is just simply toggle the LED by send UART message from your laptop.
 	 *
 	 *
 	 *
-	 * Set Channel to USART2
-	 * Set Channel Cmd to enable. That will enable USART2 channel in NVIC
+	 * Set Channel to USART2 or 3
+	 * Set Channel Cmd to enable. That will enable USART2 or 3 channel in NVIC
 	 * Set Both priorities to 0. This means high priority
 	 * Initialize NVIC
 	 * Enable RX interrupt
@@ -135,7 +135,7 @@ void USART_PutChar(char c) {
 	while(USART_GetFlagStatus(USB_USART, USART_FLAG_TXE == RESET));
 
 
-
+	USART_SendData(USB_USART, c);
 
 // Send a char using USART2 use USART_SendData()
 
@@ -176,5 +176,25 @@ void USART2_IRQHandler(void)
 		}
 	}
 }
+
+
+/**********************************************************
+ * USART3 interrupt request handler: on reception of a
+ * character 't', toggle LED and transmit a character 'T'
+ *********************************************************/
+void USART3_IRQHandler(void)
+{
+	/* RXNE handler */
+	uint16_t c;;
+	if(USART_GetITStatus(USB_USART, USART_IT_RXNE) != RESET)
+	{
+		c = USART_GetChar();
+		if (c) {
+			/* If anything received, put it back to terminal */
+			USART_SendData(USB_USART, c);
+		}
+	}
+}
+
 #endif
 
