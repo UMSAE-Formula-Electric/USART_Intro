@@ -132,7 +132,7 @@ int main(void) {
 
 void USART_PutChar(char c) {
 // Wait until transmit data register is empty, use USART_GetFlagStatus to get register status
-	while(USART_GetFlagStatus(USB_USART, USART_FLAG_TXE == RESET));
+	while(USART_GetFlagStatus(USB_USART, USART_FLAG_TXE) == RESET);
 
 
 	USART_SendData(USB_USART, c);
